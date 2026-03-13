@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(go build ./...)",
+      "Bash(go vet ./...)",
+      "Bash(npm install qrcode @types/qrcode --save)",
+      "Bash(npx tsc --noEmit)"
+    ]
+  }
+}

@@ -1,0 +1,10 @@
+.env
+.git
+.gitignore
+.DS_Store
+.claude
+logs/
+*.log
+Dockerfile
+.dockerignore
+README.md

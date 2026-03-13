@@ -1,0 +1,51 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+  }
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900
+           placeholder:text-slate-400 outline-none
+           focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20
+           transition-all duration-150;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 py-2.5
+           text-sm font-semibold text-white shadow-sm
+           hover:bg-brand-600 active:bg-brand-700
+           focus:outline-none focus:ring-2 focus:ring-brand-500/50
+           disabled:opacity-60 disabled:cursor-not-allowed
+           transition-all duration-150;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200
+           bg-white px-4 py-2.5 text-sm font-medium text-slate-700
+           hover:bg-slate-50 active:bg-slate-100
+           focus:outline-none focus:ring-2 focus:ring-slate-200
+           transition-all duration-150;
+  }
+
+  .card {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-sm p-5;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
