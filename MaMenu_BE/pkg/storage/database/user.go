@@ -47,3 +47,9 @@ func (d *database) AddHotelToOwner(database, collection string, ownerID, hotelID
 	_, err := d.mongo.UpdateOne(database, collection, filter, update)
 	return err
 }
+
+func (d *database) UpdateUser(database, collection string, id primitive.ObjectID, data bson.M) error {
+	data["updated_at"] = time.Now()
+	_, err := d.mongo.UpdateOne(database, collection, bson.M{"_id": id}, bson.M{"$set": data})
+	return err
+}

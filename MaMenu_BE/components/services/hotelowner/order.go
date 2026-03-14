@@ -5,6 +5,7 @@ import (
 
 	"mamenu/models"
 	"mamenu/pkg/logger"
+	"mamenu/pkg/ws"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -82,6 +83,19 @@ func (h *hotelowner) PlaceOrder() gin.HandlerFunc {
 			return
 		}
 
+		// Mark the table as occupied (best-effort, don't fail the order on error)
+		if req.TableNumber > 0 {
+			_ = h.database.UpdateTableByFilter(
+				bson.M{"hotel_id": hotelID, "number": req.TableNumber, "is_active": true},
+				bson.M{"is_occupied": true},
+			)
+		}
+
+		// Broadcast new order to hotel admin WS room
+		if h.hub != nil {
+			h.hub.BroadcastToHotel(hotelIDStr, ws.Message{Type: "new_order", Payload: created})
+		}
+
 		ctx.JSON(http.StatusCreated, gin.H{
 			"message": "order placed",
 			"data":    created,
@@ -147,6 +161,24 @@ func (h *hotelowner) UpdateOrderStatus() gin.HandlerFunc {
 			h.logger.WriteLog(logger.ErrorLog, "update order status failed: "+err.Error())
 			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "failed to update order status"})
 			return
+		}
+
+		// Free the table when the order is cancelled or completed (best-effort)
+		if req.Status == models.OrderCancelled || req.Status == models.OrderCompleted {
+			if order, err := h.database.GetOrderByID(id); err == nil && order.TableNumber > 0 {
+				_ = h.database.UpdateTableByFilter(
+					bson.M{"hotel_id": order.HotelID, "number": order.TableNumber, "is_active": true},
+					bson.M{"is_occupied": false},
+				)
+			}
+		}
+
+		// Broadcast status update to customer WS watchers
+		if h.hub != nil {
+			h.hub.BroadcastToOrder(ctx.Param("id"), ws.Message{
+				Type:    "order_status",
+				Payload: map[string]string{"status": string(req.Status), "order_id": ctx.Param("id")},
+			})
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{"message": "order status updated", "status": req.Status})

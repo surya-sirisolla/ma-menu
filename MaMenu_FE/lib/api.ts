@@ -48,8 +48,45 @@ export function createHotelOwner(data: {
   })
 }
 
+export function updateHotelOwner(id: string, data: {
+  name?: string
+  email?: string
+  phone?: string
+  is_active?: boolean
+}) {
+  return request<{ message: string }>(`/admin/hotel-owners/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+}
+
+export function deleteHotelOwner(id: string) {
+  return request<{ message: string }>(`/admin/hotel-owners/${id}`, { method: 'DELETE' })
+}
+
 export function getHotels() {
   return request<{ data: Hotel[] }>('/admin/hotels')
+}
+
+export function updateHotel(id: string, data: {
+  name?: string
+  phone?: string
+  email?: string
+  address?: string
+  city?: string
+  state?: string
+  country?: string
+  pincode?: string
+  is_active?: boolean
+}) {
+  return request<{ message: string }>(`/admin/hotels/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+}
+
+export function deleteHotel(id: string) {
+  return request<{ message: string }>(`/admin/hotels/${id}`, { method: 'DELETE' })
 }
 
 export function createHotel(data: {
@@ -73,6 +110,10 @@ export function createHotel(data: {
 
 export function getProfile() {
   return request<{ user: User; active_hotel: Hotel | null }>('/hotel/profile')
+}
+
+export function getMyHotels() {
+  return request<{ data: Hotel[] }>('/hotel/my-hotels')
 }
 
 export function switchHotel(hotel_id: string) {

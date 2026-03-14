@@ -10,8 +10,12 @@ import (
 type Iadmin interface {
 	CreateHotelOwner() gin.HandlerFunc
 	GetHotelOwners() gin.HandlerFunc
+	UpdateHotelOwner() gin.HandlerFunc
+	DeleteHotelOwner() gin.HandlerFunc
 	CreateHotel() gin.HandlerFunc
 	GetHotels() gin.HandlerFunc
+	UpdateHotel() gin.HandlerFunc
+	DeleteHotel() gin.HandlerFunc
 }
 
 type admin struct {

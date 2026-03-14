@@ -11,13 +11,17 @@ import (
 
 func AuthRequired() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		// Accept Bearer header or ?token= query param (for WebSocket connections)
+		var tokenStr string
 		header := ctx.GetHeader("Authorization")
-		if header == "" || !strings.HasPrefix(header, "Bearer ") {
+		if header != "" && strings.HasPrefix(header, "Bearer ") {
+			tokenStr = strings.TrimPrefix(header, "Bearer ")
+		} else if q := ctx.Query("token"); q != "" {
+			tokenStr = q
+		} else {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing or invalid authorization header"})
 			return
 		}
-
-		tokenStr := strings.TrimPrefix(header, "Bearer ")
 		secret := os.Getenv("JWT_SECRET")
 
 		token, err := jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {

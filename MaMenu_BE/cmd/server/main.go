@@ -9,6 +9,7 @@ import (
 	"mamenu/pkg/logger"
 	"mamenu/pkg/storage/database"
 	"mamenu/pkg/storage/mongodb"
+	"mamenu/pkg/ws"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -40,6 +41,9 @@ func main() {
 	// CONFIG
 	config.LoadConfig()
 
+	// WEBSOCKET HUB
+	hub := ws.NewHub()
+
 	// SERVICES
 	authImpl := authsvc.NewAuth(databaseHandler, logHandler)
 	authHandler := authsvc.NewAuthHandler(authImpl)
@@ -47,7 +51,7 @@ func main() {
 	adminImpl := adminsvc.NewAdmin(databaseHandler, logHandler)
 	adminHandler := adminsvc.NewAdminHandler(adminImpl)
 
-	hotelownerImpl := hotelownersvc.NewHotelOwner(databaseHandler, logHandler)
+	hotelownerImpl := hotelownersvc.NewHotelOwner(databaseHandler, logHandler, hub)
 	hotelownerHandler := hotelownersvc.NewHotelOwnerHandler(hotelownerImpl)
 
 	// ROUTER

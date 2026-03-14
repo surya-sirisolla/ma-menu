@@ -1,5 +1,7 @@
 {
-  "/admin/page": "app/admin/page.js",
-  "/admin/hotel-owners/page": "app/admin/hotel-owners/page.js",
-  "/admin/hotels/page": "app/admin/hotels/page.js"
+  "/menu/[hotel_id]/page": "app/menu/[hotel_id]/page.js",
+  "/hotel/[hotel_id]/page": "app/hotel/[hotel_id]/page.js",
+  "/hotel/[hotel_id]/orders/page": "app/hotel/[hotel_id]/orders/page.js",
+  "/hotel/[hotel_id]/menu/page": "app/hotel/[hotel_id]/menu/page.js",
+  "/hotel/[hotel_id]/tables/page": "app/hotel/[hotel_id]/tables/page.js"
 }

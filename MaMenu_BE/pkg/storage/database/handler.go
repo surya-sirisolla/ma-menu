@@ -57,6 +57,18 @@ func (dh *DatabaseHandler) AddHotelToOwner(ownerID, hotelID primitive.ObjectID) 
 	return dh.database.AddHotelToOwner(dbName, usersCollection, ownerID, hotelID)
 }
 
+func (dh *DatabaseHandler) UpdateUser(id primitive.ObjectID, data bson.M) error {
+	return dh.database.UpdateUser(dbName, usersCollection, id, data)
+}
+
+func (dh *DatabaseHandler) UpdateHotel(id primitive.ObjectID, data bson.M) error {
+	return dh.database.UpdateHotel(dbName, hotelsCollection, id, data)
+}
+
+func (dh *DatabaseHandler) GetHotelsByOwner(ownerID primitive.ObjectID) ([]*models.Hotel, error) {
+	return dh.database.GetAllHotels(dbName, hotelsCollection, bson.M{"owner_id": ownerID})
+}
+
 // ---- Tables ----
 
 func (dh *DatabaseHandler) CreateTable(t models.Table) (*models.Table, error) {
@@ -69,6 +81,10 @@ func (dh *DatabaseHandler) GetTablesByHotel(hotelID primitive.ObjectID) ([]*mode
 
 func (dh *DatabaseHandler) UpdateTable(id primitive.ObjectID, data bson.M) error {
 	return dh.database.UpdateTable(dbName, tablesCollection, id, data)
+}
+
+func (dh *DatabaseHandler) UpdateTableByFilter(filter bson.M, data bson.M) error {
+	return dh.database.UpdateTableByFilter(dbName, tablesCollection, filter, data)
 }
 
 // ---- Categories ----

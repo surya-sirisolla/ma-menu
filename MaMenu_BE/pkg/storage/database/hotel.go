@@ -49,3 +49,9 @@ func (d *database) GetHotelByID(database, collection string, id primitive.Object
 	}
 	return &hotel, nil
 }
+
+func (d *database) UpdateHotel(database, collection string, id primitive.ObjectID, data bson.M) error {
+	data["updated_at"] = time.Now()
+	_, err := d.mongo.UpdateOne(database, collection, bson.M{"_id": id}, bson.M{"$set": data})
+	return err
+}

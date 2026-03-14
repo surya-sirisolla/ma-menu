@@ -14,17 +14,20 @@ type Idatabase interface {
 	GetUserById(database, collection string, filter bson.M) (*models.User, error)
 	CreateUser(database, collection string, user models.User) (*models.User, error)
 	GetAllUsers(database, collection string, filter bson.M) ([]*models.User, error)
+	UpdateUser(database, collection string, id primitive.ObjectID, data bson.M) error
 
 	// hotels
 	CreateHotel(database, collection string, hotel models.Hotel) (*models.Hotel, error)
 	GetAllHotels(database, collection string, filter bson.M) ([]*models.Hotel, error)
 	GetHotelByID(database, collection string, id primitive.ObjectID) (*models.Hotel, error)
 	AddHotelToOwner(database, collection string, ownerID, hotelID primitive.ObjectID) error
+	UpdateHotel(database, collection string, id primitive.ObjectID, data bson.M) error
 
 	// tables
 	CreateTable(database, collection string, t models.Table) (*models.Table, error)
 	GetTablesByHotel(database, collection string, hotelID primitive.ObjectID) ([]*models.Table, error)
 	UpdateTable(database, collection string, id primitive.ObjectID, data bson.M) error
+	UpdateTableByFilter(database, collection string, filter bson.M, data bson.M) error
 
 	// categories
 	CreateCategory(database, collection string, c models.Category) (*models.Category, error)

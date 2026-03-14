@@ -8,7 +8,7 @@ import {
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { clearToken, getAuthPayload, saveToken } from '@/lib/auth'
-import { getProfile, switchHotel } from '@/lib/api'
+import { getMyHotels, switchHotel } from '@/lib/api'
 import type { Hotel, User } from '@/types'
 
 interface NavItem { label: string; href: string; icon: React.ElementType }
@@ -19,15 +19,22 @@ const adminNav: NavItem[] = [
   { label: 'Hotels',       href: '/admin/hotels',       icon: Building2 },
 ]
 
-const hotelNav: NavItem[] = [
-  { label: 'Dashboard',   href: '/hotel',            icon: LayoutDashboard },
-  { label: 'Orders',      href: '/hotel/orders',     icon: ClipboardList },
-  { label: 'Tables',      href: '/hotel/tables',     icon: Grid3x3 },
-  { label: 'Categories',  href: '/hotel/categories', icon: Tag },
-  { label: 'Menu',        href: '/hotel/menu',       icon: UtensilsCrossed },
-]
+function hotelNav(hotelId: string): NavItem[] {
+  return [
+    { label: 'Dashboard',  href: `/hotel/${hotelId}`,             icon: LayoutDashboard },
+    { label: 'Orders',     href: `/hotel/${hotelId}/orders`,      icon: ClipboardList },
+    { label: 'Tables',     href: `/hotel/${hotelId}/tables`,      icon: Grid3x3 },
+    { label: 'Categories', href: `/hotel/${hotelId}/categories`,  icon: Tag },
+    { label: 'Menu',       href: `/hotel/${hotelId}/menu`,        icon: UtensilsCrossed },
+  ]
+}
 
-export default function Sidebar({ role }: { role: 'super_admin' | 'hotel_admin' }) {
+interface SidebarProps {
+  role: 'super_admin' | 'hotel_admin'
+  hotelId?: string
+}
+
+export default function Sidebar({ role, hotelId }: SidebarProps) {
   const pathname = usePathname()
   const router   = useRouter()
   const payload  = getAuthPayload()
@@ -38,28 +45,28 @@ export default function Sidebar({ role }: { role: 'super_admin' | 'hotel_admin' 
   const [switchOpen,  setSwitchOpen]  = useState(false)
   const [switching,   setSwitching]   = useState(false)
 
-  const nav = role === 'super_admin' ? adminNav : hotelNav
+  const nav = role === 'super_admin' ? adminNav : hotelNav(hotelId ?? '')
 
   useEffect(() => {
     if (role !== 'hotel_admin') return
-    getProfile().then((res) => {
-      setUser(res.user)
-      setActiveHotel(res.active_hotel)
-      // Build list from hotel_ids if needed; for now show current hotel only
-      if (res.active_hotel) setAllHotels([res.active_hotel])
-    }).catch(() => {})
-  }, [role])
+    getMyHotels()
+      .then((res) => {
+        const hotels = res.data ?? []
+        setAllHotels(hotels)
+        const active = hotels.find((h) => h.id === hotelId) ?? hotels[0] ?? null
+        setActiveHotel(active)
+      })
+      .catch(() => {})
+  }, [role, hotelId])
 
-  async function handleSwitch(hotelId: string) {
-    if (hotelId === activeHotel?.id) { setSwitchOpen(false); return }
+  async function handleSwitch(hotel: Hotel) {
+    if (hotel.id === hotelId) { setSwitchOpen(false); return }
     setSwitching(true)
     try {
-      const res = await switchHotel(hotelId)
+      const res = await switchHotel(hotel.id)
       saveToken(res.token)
-      setActiveHotel(res.active_hotel)
       setSwitchOpen(false)
-      // Reload page so JWT context refreshes
-      router.refresh()
+      router.push(`/hotel/${hotel.id}`)
     } catch (e) {
       console.error(e)
     } finally {
@@ -103,10 +110,11 @@ export default function Sidebar({ role }: { role: 'super_admin' | 'hotel_admin' 
               <span className="flex-1 text-sm font-medium text-slate-200 truncate">
                 {switching ? '…' : (activeHotel?.name ?? 'No hotel')}
               </span>
-              {switching
-                ? <Loader2 size={13} className="text-slate-400 animate-spin" />
-                : <ChevronDown size={13} className={`text-slate-400 transition-transform ${switchOpen ? 'rotate-180' : ''}`} />
-              }
+              {allHotels.length > 1 && (
+                switching
+                  ? <Loader2 size={13} className="text-slate-400 animate-spin" />
+                  : <ChevronDown size={13} className={`text-slate-400 transition-transform ${switchOpen ? 'rotate-180' : ''}`} />
+              )}
             </button>
 
             {switchOpen && allHotels.length > 1 && (
@@ -114,11 +122,11 @@ export default function Sidebar({ role }: { role: 'super_admin' | 'hotel_admin' 
                 {allHotels.map((h) => (
                   <button
                     key={h.id}
-                    onClick={() => handleSwitch(h.id)}
+                    onClick={() => handleSwitch(h)}
                     className="w-full flex items-center gap-2 px-3 py-2.5 text-sm hover:bg-slate-700 transition-colors text-left"
                   >
                     <span className="flex-1 text-slate-200 truncate">{h.name}</span>
-                    {h.id === activeHotel?.id && <Check size={13} className="text-brand-400" />}
+                    {h.id === hotelId && <Check size={13} className="text-brand-400" />}
                   </button>
                 ))}
               </div>

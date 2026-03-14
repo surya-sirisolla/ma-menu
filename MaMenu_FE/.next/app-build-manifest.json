@@ -1,14 +1,19 @@
 {
   "pages": {
-    "/admin/page": [
+    "/hotel/[hotel_id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/page.js"
+      "static/chunks/app/hotel/[hotel_id]/page.js"
     ],
-    "/admin/layout": [
+    "/hotel/[hotel_id]/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/layout.js"
+      "static/chunks/app/hotel/[hotel_id]/layout.js"
+    ],
+    "/hotel/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/hotel/layout.js"
     ],
     "/layout": [
       "static/chunks/webpack.js",
@@ -16,15 +21,30 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/admin/hotel-owners/page": [
+    "/hotel/[hotel_id]/orders/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/hotel-owners/page.js"
+      "static/chunks/app/hotel/[hotel_id]/orders/page.js"
     ],
-    "/admin/hotels/page": [
+    "/hotel/[hotel_id]/tables/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/admin/hotels/page.js"
+      "static/chunks/app/hotel/[hotel_id]/tables/page.js"
+    ],
+    "/hotel/[hotel_id]/categories/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/hotel/[hotel_id]/categories/page.js"
+    ],
+    "/hotel/[hotel_id]/menu/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/hotel/[hotel_id]/menu/page.js"
+    ],
+    "/menu/[hotel_id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/menu/[hotel_id]/page.js"
     ]
   }
 }

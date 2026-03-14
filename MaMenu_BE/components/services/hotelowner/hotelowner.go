@@ -3,6 +3,7 @@ package hotelowner
 import (
 	"mamenu/pkg/logger"
 	"mamenu/pkg/storage/database"
+	"mamenu/pkg/ws"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,6 +11,11 @@ import (
 type Ihotelowner interface {
 	GetProfile() gin.HandlerFunc
 	SwitchHotel() gin.HandlerFunc
+	GetMyHotels() gin.HandlerFunc
+
+	// WebSocket endpoints
+	WSHotel() gin.HandlerFunc
+	WSOrder() gin.HandlerFunc
 
 	AddTable() gin.HandlerFunc
 	GetTables() gin.HandlerFunc
@@ -39,11 +45,13 @@ type Ihotelowner interface {
 type hotelowner struct {
 	database *database.DatabaseHandler
 	logger   *logger.LoggerHandler
+	hub      *ws.Hub
 }
 
-func NewHotelOwner(database *database.DatabaseHandler, logger *logger.LoggerHandler) *hotelowner {
+func NewHotelOwner(database *database.DatabaseHandler, logger *logger.LoggerHandler, hub *ws.Hub) *hotelowner {
 	return &hotelowner{
 		database: database,
 		logger:   logger,
+		hub:      hub,
 	}
 }

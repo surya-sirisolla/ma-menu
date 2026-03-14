@@ -44,3 +44,9 @@ func (d *database) UpdateTable(database, collection string, id primitive.ObjectI
 	_, err := d.mongo.UpdateOne(database, collection, bson.M{"_id": id}, bson.M{"$set": data})
 	return err
 }
+
+func (d *database) UpdateTableByFilter(database, collection string, filter bson.M, data bson.M) error {
+	data["updated_at"] = time.Now()
+	_, err := d.mongo.UpdateOne(database, collection, filter, bson.M{"$set": data})
+	return err
+}

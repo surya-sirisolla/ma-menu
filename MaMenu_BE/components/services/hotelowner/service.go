@@ -79,8 +79,8 @@ func (h *hotelowner) GetProfile() gin.HandlerFunc {
 		}
 
 		ctx.JSON(http.StatusOK, gin.H{
-			"user":          user,
-			"active_hotel":  hotel,
+			"user":         user,
+			"active_hotel": hotel,
 		})
 	}
 }
@@ -147,6 +147,26 @@ func (h *hotelowner) SwitchHotel() gin.HandlerFunc {
 			"token":        token,
 			"active_hotel": hotel,
 		})
+	}
+}
+
+func (h *hotelowner) GetMyHotels() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		userID := userIDFromCtx(ctx)
+		ownerOID, err := primitive.ObjectIDFromHex(userID)
+		if err != nil {
+			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			return
+		}
+
+		hotels, err := h.database.GetHotelsByOwner(ownerOID)
+		if err != nil {
+			h.logger.WriteLog(logger.ErrorLog, "get my hotels failed: "+err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch hotels"})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, gin.H{"data": hotels})
 	}
 }
 
@@ -300,10 +320,10 @@ func (h *hotelowner) CreateCategory() gin.HandlerFunc {
 		}
 
 		var req struct {
-			Name      string  `json:"name" binding:"required"`
-			Type      string  `json:"type"`
-			ParentID  string  `json:"parent_id"`
-			SortOrder int     `json:"sort_order"`
+			Name      string `json:"name" binding:"required"`
+			Type      string `json:"type"`
+			ParentID  string `json:"parent_id"`
+			SortOrder int    `json:"sort_order"`
 		}
 		if err := ctx.ShouldBindJSON(&req); err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request: " + err.Error()})
@@ -475,7 +495,7 @@ func (h *hotelowner) GetMenu() gin.HandlerFunc {
 			return
 		}
 
-		filter := bson.M{"hotel_id": hotelID, "is_active": true}
+		filter := bson.M{"hotel_id": hotelID, "is_available": true}
 		if catID := ctx.Query("category_id"); catID != "" {
 			oid, err := primitive.ObjectIDFromHex(catID)
 			if err == nil {
