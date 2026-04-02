@@ -25,6 +25,31 @@ func (d *database) CreateTable(database, collection string, t models.Table) (*mo
 	return &t, nil
 }
 
+func (d *database) CreateManyTables(db, collection string, tables []models.Table) ([]*models.Table, error) {
+	now := time.Now()
+	docs := make([]any, len(tables))
+	for i := range tables {
+		tables[i].ID = primitive.NewObjectID()
+		tables[i].IsActive = true
+		tables[i].IsOccupied = false
+		tables[i].CreatedAt = now
+		tables[i].UpdatedAt = now
+		docs[i] = tables[i]
+	}
+
+	_, err := d.mongo.InsertMany(db, collection, docs)
+	if err != nil {
+		return nil, err
+	}
+
+	result := make([]*models.Table, len(tables))
+	for i := range tables {
+		t := tables[i]
+		result[i] = &t
+	}
+	return result, nil
+}
+
 func (d *database) GetTablesByHotel(database, collection string, hotelID primitive.ObjectID) ([]*models.Table, error) {
 	cursor, err := d.mongo.Find(database, collection, bson.M{"hotel_id": hotelID, "is_active": true})
 	if err != nil {

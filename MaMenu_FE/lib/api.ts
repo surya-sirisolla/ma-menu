@@ -23,10 +23,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
 // ---- Auth ----
 
-export function login(email: string, password: string) {
+export function login(identifier: string, password: string) {
   return request<{ message: string; token: string; default_hotel?: Hotel }>(
     '/auth/login',
-    { method: 'POST', body: JSON.stringify({ userId: email, password }) }
+    { method: 'POST', body: JSON.stringify({ userId: identifier, password }) }
   )
 }
 
@@ -131,6 +131,13 @@ export function getTables() {
 
 export function createTable(data: { number: number; label: string; capacity: number }) {
   return request<{ message: string; data: Table }>('/hotel/tables', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+}
+
+export function createTablesBulk(data: { start_number: number; count: number; capacity?: number; label_prefix?: string }) {
+  return request<{ message: string; data: Table[] }>('/hotel/tables/bulk', {
     method: 'POST',
     body: JSON.stringify(data),
   })

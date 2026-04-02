@@ -18,6 +18,7 @@ type Ihotelowner interface {
 	WSOrder() gin.HandlerFunc
 
 	AddTable() gin.HandlerFunc
+	AddTables() gin.HandlerFunc
 	GetTables() gin.HandlerFunc
 	UpdateTable() gin.HandlerFunc
 	DeleteTable() gin.HandlerFunc

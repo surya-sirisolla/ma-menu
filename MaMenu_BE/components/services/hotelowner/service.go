@@ -211,6 +211,63 @@ func (h *hotelowner) AddTable() gin.HandlerFunc {
 	}
 }
 
+func (h *hotelowner) AddTables() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		hotelID, ok := hotelIDFromCtx(ctx)
+		if !ok {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "no active hotel in token"})
+			return
+		}
+
+		var req struct {
+			StartNumber int    `json:"start_number" binding:"required"`
+			Count       int    `json:"count" binding:"required"`
+			Capacity    int    `json:"capacity"`
+			LabelPrefix string `json:"label_prefix"`
+		}
+		if err := ctx.ShouldBindJSON(&req); err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "invalid request: " + err.Error()})
+			return
+		}
+
+		if req.Count < 1 || req.Count > 50 {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": "count must be between 1 and 50"})
+			return
+		}
+		if req.Capacity == 0 {
+			req.Capacity = 4
+		}
+
+		tables := make([]models.Table, req.Count)
+		for i := range tables {
+			num := req.StartNumber + i
+			label := ""
+			if req.LabelPrefix != "" {
+				label = fmt.Sprintf("%s %d", req.LabelPrefix, num)
+			}
+			tables[i] = models.Table{
+				HotelID:  hotelID,
+				Number:   num,
+				Label:    label,
+				Capacity: req.Capacity,
+				QRCode:   fmt.Sprintf("/menu/%s?table=%d", hotelID.Hex(), num),
+			}
+		}
+
+		created, err := h.database.CreateManyTables(tables)
+		if err != nil {
+			h.logger.WriteLog(logger.ErrorLog, "bulk create tables failed: "+err.Error())
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create tables"})
+			return
+		}
+
+		ctx.JSON(http.StatusCreated, gin.H{
+			"message": fmt.Sprintf("%d tables created", len(created)),
+			"data":    created,
+		})
+	}
+}
+
 func (h *hotelowner) GetTables() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		hotelID, ok := hotelIDFromCtx(ctx)

@@ -39,6 +39,16 @@ func (a *admin) CreateHotelOwner() gin.HandlerFunc {
 			return
 		}
 
+		// check for duplicate email or phone
+		dupFilter := bson.M{"email": req.Email}
+		if req.Phone != "" {
+			dupFilter = bson.M{"$or": []bson.M{{"email": req.Email}, {"phone": req.Phone}}}
+		}
+		if existing, _ := a.database.GetUser(dupFilter); existing != nil {
+			ctx.JSON(http.StatusConflict, gin.H{"error": "a user with this email or phone already exists"})
+			return
+		}
+
 		hashed, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 		if err != nil {
 			a.logger.WriteLog(logger.ErrorLog, "password hash failed: "+err.Error())

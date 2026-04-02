@@ -21,6 +21,7 @@ func (r *ginRouter) registerHotelRoutes(api *gin.RouterGroup) {
 
 		// tables
 		hotelGroup.POST("/tables", r.hotelowner.AddTable())
+		hotelGroup.POST("/tables/bulk", r.hotelowner.AddTables())
 		hotelGroup.GET("/tables", r.hotelowner.GetTables())
 		hotelGroup.PUT("/tables/:id", r.hotelowner.UpdateTable())
 		hotelGroup.DELETE("/tables/:id", r.hotelowner.DeleteTable())

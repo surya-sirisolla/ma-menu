@@ -16,6 +16,7 @@ func (hw *HotelOwnerHandler) GetMyHotels() gin.HandlerFunc      { return hw.h.Ge
 func (hw *HotelOwnerHandler) WSHotel() gin.HandlerFunc          { return hw.h.WSHotel() }
 func (hw *HotelOwnerHandler) WSOrder() gin.HandlerFunc          { return hw.h.WSOrder() }
 func (hw *HotelOwnerHandler) AddTable() gin.HandlerFunc         { return hw.h.AddTable() }
+func (hw *HotelOwnerHandler) AddTables() gin.HandlerFunc        { return hw.h.AddTables() }
 func (hw *HotelOwnerHandler) GetTables() gin.HandlerFunc        { return hw.h.GetTables() }
 func (hw *HotelOwnerHandler) UpdateTable() gin.HandlerFunc      { return hw.h.UpdateTable() }
 func (hw *HotelOwnerHandler) DeleteTable() gin.HandlerFunc      { return hw.h.DeleteTable() }

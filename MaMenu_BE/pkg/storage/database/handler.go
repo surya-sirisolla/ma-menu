@@ -75,6 +75,10 @@ func (dh *DatabaseHandler) CreateTable(t models.Table) (*models.Table, error) {
 	return dh.database.CreateTable(dbName, tablesCollection, t)
 }
 
+func (dh *DatabaseHandler) CreateManyTables(tables []models.Table) ([]*models.Table, error) {
+	return dh.database.CreateManyTables(dbName, tablesCollection, tables)
+}
+
 func (dh *DatabaseHandler) GetTablesByHotel(hotelID primitive.ObjectID) ([]*models.Table, error) {
 	return dh.database.GetTablesByHotel(dbName, tablesCollection, hotelID)
 }

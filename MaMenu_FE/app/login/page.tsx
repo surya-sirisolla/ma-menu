@@ -8,7 +8,7 @@ import { saveToken, getAuthPayload } from '@/lib/auth'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [email, setEmail]       = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw]     = useState(false)
   const [loading, setLoading]   = useState(false)
@@ -26,7 +26,7 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      const res = await login(email.trim(), password)
+      const res = await login(identifier.trim(), password)
       saveToken(res.token)
       const payload = getAuthPayload()
       if (payload?.role === 'super_admin') router.push('/admin')
@@ -103,19 +103,19 @@ export default function LoginPage() {
           <p className="text-slate-500 text-sm mb-8">Sign in to your account to continue</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* email */}
+            {/* identifier */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Email address
+                Email or Phone
               </label>
               <input
-                type="email"
+                type="text"
                 className="input"
-                placeholder="admin@mamenu.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@mamenu.com or +1234567890"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
-                autoComplete="email"
+                autoComplete="username"
               />
             </div>
 

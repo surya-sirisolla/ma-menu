@@ -779,9 +779,6 @@ body{
 .-mt-4{
   margin-top: -1rem;
 }
-.mb-0\.5{
-  margin-bottom: 0.125rem;
-}
 .mb-1{
   margin-bottom: 0.25rem;
 }
@@ -1037,9 +1034,6 @@ body{
 .max-w-sm{
   max-width: 24rem;
 }
-.max-w-xs{
-  max-width: 20rem;
-}
 .flex-1{
   flex: 1 1 0%;
 }
@@ -1133,9 +1127,6 @@ body{
 }
 .items-center{
   align-items: center;
-}
-.justify-start{
-  justify-content: flex-start;
 }
 .justify-center{
   justify-content: center;
@@ -1645,10 +1636,6 @@ body{
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
-.px-8{
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
 .py-0\.5{
   padding-top: 0.125rem;
   padding-bottom: 0.125rem;
@@ -1735,8 +1722,8 @@ body{
 .pt-1{
   padding-top: 0.25rem;
 }
-.pt-16{
-  padding-top: 4rem;
+.pt-10{
+  padding-top: 2.5rem;
 }
 .pt-2{
   padding-top: 0.5rem;
@@ -1747,14 +1734,11 @@ body{
 .pt-4{
   padding-top: 1rem;
 }
-.pt-8{
-  padding-top: 2rem;
-}
-.pt-10{
-  padding-top: 2.5rem;
-}
 .pt-6{
   padding-top: 1.5rem;
+}
+.pt-8{
+  padding-top: 2rem;
 }
 .text-left{
   text-align: left;

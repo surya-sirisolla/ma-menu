@@ -48,3 +48,18 @@
 {"level":"info","ts":"2026-03-14T14:41:57.288+0530","msg":"Creating MongoDB Client"}
 {"level":"info","ts":"2026-03-14T14:41:58.315+0530","msg":"MongoDB connected successfully"}
 {"level":"info","ts":"2026-03-14T14:41:58.315+0530","msg":"MongoDB client initialized successfully"}
+{"level":"info","ts":"2026-03-15T11:46:25.521+0530","msg":"Application logger initialized"}
+{"level":"info","ts":"2026-03-15T11:46:25.522+0530","msg":"Logger initialized"}
+{"level":"info","ts":"2026-03-15T11:46:25.522+0530","msg":"Creating MongoDB Client"}
+{"level":"info","ts":"2026-03-15T11:46:26.471+0530","msg":"MongoDB connected successfully"}
+{"level":"info","ts":"2026-03-15T11:46:26.471+0530","msg":"MongoDB client initialized successfully"}
+{"level":"info","ts":"2026-03-15T12:00:46.004+0530","msg":"Application logger initialized"}
+{"level":"info","ts":"2026-03-15T12:00:46.004+0530","msg":"Logger initialized"}
+{"level":"info","ts":"2026-03-15T12:00:46.004+0530","msg":"Creating MongoDB Client"}
+{"level":"info","ts":"2026-03-15T12:00:47.893+0530","msg":"MongoDB connected successfully"}
+{"level":"info","ts":"2026-03-15T12:00:47.893+0530","msg":"MongoDB client initialized successfully"}
+{"level":"info","ts":"2026-03-15T12:12:00.974+0530","msg":"Application logger initialized"}
+{"level":"info","ts":"2026-03-15T12:12:00.974+0530","msg":"Logger initialized"}
+{"level":"info","ts":"2026-03-15T12:12:00.974+0530","msg":"Creating MongoDB Client"}
+{"level":"info","ts":"2026-03-15T12:12:02.058+0530","msg":"MongoDB connected successfully"}
+{"level":"info","ts":"2026-03-15T12:12:02.059+0530","msg":"MongoDB client initialized successfully"}

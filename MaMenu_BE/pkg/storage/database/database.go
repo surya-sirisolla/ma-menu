@@ -25,6 +25,7 @@ type Idatabase interface {
 
 	// tables
 	CreateTable(database, collection string, t models.Table) (*models.Table, error)
+	CreateManyTables(database, collection string, tables []models.Table) ([]*models.Table, error)
 	GetTablesByHotel(database, collection string, hotelID primitive.ObjectID) ([]*models.Table, error)
 	UpdateTable(database, collection string, id primitive.ObjectID, data bson.M) error
 	UpdateTableByFilter(database, collection string, filter bson.M, data bson.M) error

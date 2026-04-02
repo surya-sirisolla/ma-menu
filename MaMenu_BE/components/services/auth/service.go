@@ -23,8 +23,8 @@ func (a *auth) Login() gin.HandlerFunc {
 			return
 		}
 
-		// fetch user by email
-		user, err := a.database.GetUser(bson.M{"email": login.UserId})
+		// fetch user by email or phone
+		user, err := a.database.GetUser(bson.M{"$or": []bson.M{{"email": login.UserId}, {"phone": login.UserId}}})
 		if err != nil {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"error": "user not found"})
 			return

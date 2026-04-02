@@ -4,7 +4,7 @@ import { useEffect, useState, FormEvent } from 'react'
 import {
   Plus, QrCode, Pencil, Trash2, Users, Loader2, CheckCircle, Grid3x3, List
 } from 'lucide-react'
-import { getTables, createTable, updateTable, setTableStatus, deleteTable } from '@/lib/api'
+import { getTables, createTable, createTablesBulk, updateTable, setTableStatus, deleteTable } from '@/lib/api'
 import { getProfile } from '@/lib/api'
 import type { Table, Hotel } from '@/types'
 import Modal from '@/components/Modal'
@@ -32,6 +32,13 @@ export default function TablesPage() {
   // delete confirm
   const [deleteTarget,    setDeleteTarget]    = useState<Table | null>(null)
   const [deleteLoading,   setDeleteLoading]   = useState(false)
+
+  // bulk create
+  const [bulkOpen,        setBulkOpen]        = useState(false)
+  const [bulkForm,        setBulkForm]        = useState({ start_number: '', count: '', capacity: '', label_prefix: '' })
+  const [bulkSubmitting,  setBulkSubmitting]  = useState(false)
+  const [bulkError,       setBulkError]       = useState('')
+  const [bulkSuccess,     setBulkSuccess]     = useState('')
 
   async function load() {
     setLoading(true)
@@ -107,6 +114,34 @@ export default function TablesPage() {
     finally { setDeleteLoading(false) }
   }
 
+  function openBulk() {
+    setBulkForm({ start_number: '', count: '', capacity: '', label_prefix: '' })
+    setBulkError('')
+    setBulkSuccess('')
+    setBulkOpen(true)
+  }
+
+  async function handleBulkSubmit(e: FormEvent) {
+    e.preventDefault()
+    setBulkError('')
+    setBulkSubmitting(true)
+    try {
+      const res = await createTablesBulk({
+        start_number: Number(bulkForm.start_number),
+        count:        Number(bulkForm.count),
+        capacity:     bulkForm.capacity ? Number(bulkForm.capacity) : undefined,
+        label_prefix: bulkForm.label_prefix || undefined,
+      })
+      setBulkSuccess(res.message)
+      await load()
+      setTimeout(() => { setBulkOpen(false); setBulkSuccess('') }, 1500)
+    } catch (err: unknown) {
+      setBulkError(err instanceof Error ? err.message : 'Failed to create tables')
+    } finally {
+      setBulkSubmitting(false)
+    }
+  }
+
   const activeTables = tables.filter((t) => t.is_active)
 
   return (
@@ -129,6 +164,9 @@ export default function TablesPage() {
               className={`p-1.5 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-white shadow text-slate-900' : 'text-slate-400 hover:text-slate-600'}`}
             ><List size={16} /></button>
           </div>
+          <button onClick={openBulk} className="btn-secondary">
+            <Plus size={16} /> Bulk Add
+          </button>
           <button onClick={openCreate} className="btn-primary">
             <Plus size={16} /> Add Table
           </button>
@@ -348,6 +386,71 @@ export default function TablesPage() {
           hotelName={hotel?.name}
         />
       )}
+
+      {/* Bulk Create Modal */}
+      <Modal open={bulkOpen} onClose={() => setBulkOpen(false)} title="Bulk Add Tables">
+        {bulkSuccess ? (
+          <div className="flex flex-col items-center py-6 gap-3">
+            <CheckCircle size={44} className="text-emerald-500" />
+            <p className="text-slate-700 font-medium">{bulkSuccess}</p>
+          </div>
+        ) : (
+          <form onSubmit={handleBulkSubmit} className="space-y-4">
+            <p className="text-sm text-slate-500">Generate multiple tables at once with sequential numbers.</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Starting number *</label>
+                <input
+                  type="number" min={1} className="input" placeholder="1"
+                  value={bulkForm.start_number}
+                  onChange={(e) => setBulkForm({ ...bulkForm, start_number: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Number of tables *</label>
+                <input
+                  type="number" min={1} max={50} className="input" placeholder="10"
+                  value={bulkForm.count}
+                  onChange={(e) => setBulkForm({ ...bulkForm, count: e.target.value })}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Capacity per table</label>
+                <input
+                  type="number" min={1} className="input" placeholder="4 (default)"
+                  value={bulkForm.capacity}
+                  onChange={(e) => setBulkForm({ ...bulkForm, capacity: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">Label prefix</label>
+                <input
+                  className="input" placeholder="e.g. Table"
+                  value={bulkForm.label_prefix}
+                  onChange={(e) => setBulkForm({ ...bulkForm, label_prefix: e.target.value })}
+                />
+              </div>
+            </div>
+            {bulkForm.start_number && bulkForm.count && (
+              <p className="text-xs text-slate-400">
+                Will create tables #{bulkForm.start_number} – #{Number(bulkForm.start_number) + Number(bulkForm.count) - 1}
+                {bulkForm.label_prefix ? ` labeled "${bulkForm.label_prefix} N"` : ''}.
+              </p>
+            )}
+            {bulkError && (
+              <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{bulkError}</div>
+            )}
+            <div className="flex gap-3 pt-2">
+              <button type="button" onClick={() => setBulkOpen(false)} className="btn-secondary flex-1">Cancel</button>
+              <button type="submit" disabled={bulkSubmitting} className="btn-primary flex-1">
+                {bulkSubmitting ? <><Loader2 size={16} className="animate-spin" /> Creating…</> : 'Create Tables'}
+              </button>
+            </div>
+          </form>
+        )}
+      </Modal>
 
       {/* Delete Confirm */}
       <Modal open={!!deleteTarget} onClose={() => setDeleteTarget(null)} title="Remove Table" size="sm">
